@@ -1,0 +1,39 @@
+.weather-card {
+  width: clamp(260px, 40vw, 330px);
+  margin: 0 auto 20px; /* anchor with bottom spacing */
+  padding: 24px 28px;
+  border-radius: 16px;
+  /* backdrop-filter: blur(12px); */
+  background: rgba(255,255,255,0.06);
+  color: var(--text-color);
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* cap height so it doesn’t monopolize viewport */
+  max-height: 70vh;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.weather-card img.weather-icon {
+  width: 100px;
+}
+.weather-card .temperature {
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  margin: 8px 0;
+}
+.weather-card .details {
+  list-style: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+.weather-card .details li {
+  margin: 4px 0;
+}

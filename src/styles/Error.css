@@ -1,0 +1,9 @@
+.error-message {
+  padding: 20px;
+  background: rgba(255,0,0,0.1);
+  color: #900;
+  border-radius: 8px;
+  text-align: center;
+  opacity: 0;
+  animation: fadeInError 0.4s forwards;
+}

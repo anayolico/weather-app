@@ -1,0 +1,23 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  opacity: 0;
+  animation: fadeInLoading 0.3s forwards;
+}
+
+@keyframes fadeInLoading {
+  to { opacity: 1; }
+}
+.spinner {
+  border: 6px solid rgba(0,0,0,0.1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,11 @@
+.unit-toggle {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s;
+}
+.unit-toggle:hover {
+  color: #ffcc00;
+}

@@ -1,0 +1,241 @@
+:root {
+  --bg-light: #ffffff;
+  --bg-dark: #12122c;
+  --text-light: #213547;
+  --text-dark: #e0e0e0;
+  --text-color: #ffffff;
+  --accent: #646cff;
+  --glass-bg: rgba(255,255,255,0.1);
+  --transition-speed: 0.3s;
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: var(--text-light);
+  background-color: var(--bg-light);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* theme attribute */
+[data-theme="dark"] {
+  color: var(--text-dark);
+  --text-color: var(--text-dark);
+  background-color: var(--bg-dark);
+}
+
+[data-theme="light"] {
+  --text-color: var(--text-light);
+}
+.glass {
+  /* backdrop-filter: blur(10px); */
+  background: var(--glass-bg);
+}
+
+/* ensure all text uses the text color variable */
+* { color: var(--text-color); }
+
+/* layout */
+.app-container {
+  padding: 16px;
+  padding-bottom: 48px; /* extra breathing room below cards */
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.app-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* anchor content from top area */
+  padding-top: 120px; /* space for top-bar */
+  /* prevent full‑viewport forcing so card height remains natural */
+  /* min-height: calc(100vh - 120px); */
+}
+
+.top-bar {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none; /* children will enable pointer-events */
+  padding: 0 24px;
+}
+
+.top-bar .search-wrap {
+  flex: 1 1 auto;
+  max-width: 520px;
+  display: flex;
+  justify-content: center; /* center search bar */
+  pointer-events: auto;
+}
+
+/* remove default margin from search bar when it's in the header */
+.top-bar .search-bar {
+  margin: 0;
+}
+
+.top-bar .controls {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: auto;
+}
+.top-bar { z-index: 20; width: 100%; }
+
+
+/* generic fade-in used by errors and informational messages */
+@keyframes fadeInError {
+  to { opacity: 1; }
+}
+
+.location-message {
+  margin-top: 24px;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  background: rgba(255,255,255,0.08);
+  padding: 10px 16px;
+  border-radius: 12px;
+  opacity: 0;
+  animation: fadeInError 0.4s forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.location-message .loc-action {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.location-message .loc-action:hover {
+  opacity: 0.8;
+}
+.location-message .loc-action:focus-visible {
+  outline: 2px auto var(--accent);
+}
+
+.forecast-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 28px;
+  align-items: flex-end; /* align bottoms so small cards line up visually */
+  padding: 8px 12px;
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* large desktop: force single row with space between */
+@media (min-width: 900px) {
+  .forecast-list {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+}
+
+/* medium screens: two per row */
+@media (min-width: 600px) and (max-width: 899px) {
+  .forecast-list {
+    justify-content: center;
+  }
+}
+
+/* small screens: two per row */
+@media (max-width: 599px) {
+  .forecast-list {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .forecast-card {
+    flex: 0 0 45%;
+  }
+}
+
+.forecast-list::-webkit-scrollbar { height: 8px; }
+.forecast-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 8px; }
