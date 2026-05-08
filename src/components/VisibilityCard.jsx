@@ -2,6 +2,15 @@ import PropTypes from 'prop-types';
 import './SecondaryCard.css';
 
 const VisibilityCard = ({ visibility = 10 }) => {
+  const getMessage = (val) => {
+    if (val >= 10) return 'Condition is perfectly clear';
+    if (val >= 5) return 'Visibility is good';
+    if (val >= 2) return 'Slight haze or mist';
+    return 'Foggy condition, drive safe';
+  };
+
+  const percentage = Math.min((visibility / 10) * 100, 100);
+
   return (
     <div className="secondary-card glass-card visibility-card">
       <div className="card-header">
@@ -17,10 +26,14 @@ const VisibilityCard = ({ visibility = 10 }) => {
         <span className="value-unit">km</span>
       </div>
 
+      <div className="gauge-container">
+        <div className="gauge-bar" style={{ width: `${percentage}%` }}></div>
+      </div>
+
       <div className="divider"></div>
 
       <p className="card-footer-text">
-        Condition is perfectly clear
+        {getMessage(visibility)}
       </p>
     </div>
   );
