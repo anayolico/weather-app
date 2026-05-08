@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import './ForecastCard.css';
 
 const processForecast = (list) => {
@@ -106,37 +107,39 @@ const ForecastCard = ({ data }) => {
   };
 
   return (
-    <div className="forecast-card glass-card">
-      <div className="card-header">
-        <h3 className="card-title">5-Day Forecast</h3>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="calendar-icon">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
+    <>
+      <div className="forecast-card glass-card">
+        <div className="card-header">
+          <h3 className="card-title">5-Day Forecast</h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="calendar-icon">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+
+        <div className="forecast-list">
+          {forecastData.map((item, index) => (
+            <div key={index} className="forecast-item">
+              <span className="day-name">{item.day}</span>
+              <div className="weather-icon-wrapper">
+                {getIcon(item.icon)}
+              </div>
+              <div className="temp-range">
+                <span className="high-temp">{item.high}°</span>
+                <span className="low-temp">{item.low}°</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button className="view-calendar-btn" onClick={() => setIsModalOpen(true)}>
+          View Full Calendar
+        </button>
       </div>
 
-      <div className="forecast-list">
-        {forecastData.map((item, index) => (
-          <div key={index} className="forecast-item">
-            <span className="day-name">{item.day}</span>
-            <div className="weather-icon-wrapper">
-              {getIcon(item.icon)}
-            </div>
-            <div className="temp-range">
-              <span className="high-temp">{item.high}°</span>
-              <span className="low-temp">{item.low}°</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <button className="view-calendar-btn" onClick={() => setIsModalOpen(true)}>
-        View Full Calendar
-      </button>
-
-      {isModalOpen && (
+      {isModalOpen && createPortal(
         <div className="forecast-modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="forecast-modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -179,9 +182,10 @@ const ForecastCard = ({ data }) => {
               })}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 };
 
