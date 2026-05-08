@@ -7,7 +7,7 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 28px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .forecast-card .card-header {
@@ -19,7 +19,7 @@
 .forecast-card .card-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .calendar-icon {
@@ -68,7 +68,7 @@
 .high-temp {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .low-temp {
@@ -136,7 +136,7 @@
 .modal-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .close-modal {
@@ -197,7 +197,7 @@
 .hourly-temp {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .hourly-details {
@@ -237,7 +237,7 @@
     width: auto;
     text-align: center;
     font-size: 1rem;
-    color: #fff;
+    color: var(--text-primary);
   }
   
   .temp-range {

@@ -34,7 +34,7 @@
 .hero-city {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 .hero-date {
   color: var(--text-secondary);
@@ -51,7 +51,7 @@
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: #fff;
+  color: var(--text-primary);
 }
 .hero-unit {
   font-size: 40%;
@@ -94,7 +94,7 @@
 .stat-value {
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 @media (max-width: 600px) {
