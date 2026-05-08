@@ -1,0 +1,252 @@
+.forecast-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(30, 15, 60, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  color: #fff;
+}
+
+.forecast-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forecast-card .card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.calendar-icon {
+  color: #fca5a5; /* Light pink/peach color from image */
+}
+
+.forecast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.forecast-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  transition: background 0.2s;
+}
+
+.forecast-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.day-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  width: 40px;
+}
+
+.weather-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.temp-range {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.high-temp {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.low-temp {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.view-calendar-btn {
+  margin-top: auto;
+  padding: 16px;
+  background: #fff;
+  color: #4c1d95; /* Dark purple */
+  border: none;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.view-calendar-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.view-calendar-btn:active {
+  transform: translateY(0);
+}
+
+/* Modal Styles */
+.forecast-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.forecast-modal-content {
+  width: 100%;
+  max-width: 800px;
+  max-height: 80vh;
+  background: #1a1535;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+.forecast-modal-content .modal-header {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.close-modal {
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-modal:hover {
+  color: #fff;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.modal-day-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #a78bfa; /* Light purple */
+}
+
+.hourly-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.hourly-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.hourly-time {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hourly-temp {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.hourly-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Desktop horizontal layout */
+@media (min-width: 1025px) {
+  .forecast-card {
+    grid-column: span 3;
+  }
+  
+  .forecast-list {
+    flex-direction: row;
+    gap: 16px;
+  }
+  
+  .forecast-item {
+    flex: 1;
+    flex-direction: column;
+    padding: 20px 16px;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .day-name {
+    width: auto;
+    text-align: center;
+    font-size: 1rem;
+    color: #fff;
+  }
+  
+  .temp-range {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+  }
+  
+  .high-temp {
+    font-size: 1.4rem;
+  }
+}

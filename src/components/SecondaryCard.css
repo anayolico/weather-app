@@ -1,0 +1,209 @@
+.secondary-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 180px;
+  animation: fadeInUp 0.5s ease;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.card-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.status-badge.good {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.aqi-content, .value-content {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.aqi-value, .main-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.aqi-label, .value-unit {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.aqi-progress-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.aqi-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #ec4899);
+  border-radius: 3px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 8px 0;
+}
+
+.card-footer-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Radar specific */
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: #f87171;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.radar-map-container {
+  flex: 1;
+  border-radius: 12px;
+  position: relative;
+  min-height: 120px;
+  overflow: hidden;
+}
+
+.radar-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: invert(0.9) hue-rotate(180deg) brightness(1.1) contrast(1.2); /* Improved dark map theme */
+  opacity: 0.8;
+}
+
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-end;
+  padding: 12px;
+  pointer-events: none; /* Let clicks pass through to button but not to iframe */
+}
+
+.expand-map-btn {
+  pointer-events: auto;
+  background: rgba(18, 15, 42, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.expand-map-btn:hover {
+  background: var(--accent-purple);
+  transform: translateY(-2px);
+}
+
+.map-highlight {
+  background: #3b82f6;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+/* Modal Styles */
+.map-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.map-modal-content {
+  width: 100%;
+  max-width: 1100px;
+  height: 85vh;
+  background: #1a1535;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+.modal-header {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.close-modal {
+  font-size: 2.5rem;
+  color: var(--text-secondary);
+  background: transparent;
+  line-height: 1;
+}
+
+.expanded-radar-iframe {
+  flex: 1;
+  border: none;
+  filter: invert(0.9) hue-rotate(180deg) brightness(1.1) contrast(1.2);
+  opacity: 0.9;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

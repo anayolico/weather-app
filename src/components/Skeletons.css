@@ -1,0 +1,29 @@
+.hero-skeleton {
+  padding: 40px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sk-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sk-circle {
+  border-radius: 50%;
+}
+
+.card-skeleton {
+  padding: 24px;
+  min-height: 220px;
+}
+
+.sk-loc-card {
+  width: 100%;
+}
+
+.locations-skeleton {
+  padding: 24px;
+}

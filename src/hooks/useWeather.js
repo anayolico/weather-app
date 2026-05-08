@@ -1,30 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import weatherService from '../services/weatherService';
 
-const groupForecast = (list) => {
-  const days = {};
-  list.forEach((item) => {
-    const date = new Date(item.dt * 1000).toLocaleDateString();
-    if (!days[date]) days[date] = [];
-    days[date].push(item);
-  });
-  return Object.entries(days)
-    .map(([date, items]) => {
-      const temps = items.map((i) => i.main.temp);
-      const { icon, description } = items[0].weather[0];
-      return {
-        date,
-        temps,
-        icon: `https://openweathermap.org/img/wn/${icon}@2x.png`,
-        description,
-      };
-    })
-    .slice(0, 5); // only first 5 days
-};
+
 
 export const useWeather = () => {
   const [current, setCurrent] = useState(null);
-  const [forecast, setForecast] = useState([]);
+  const [aqi, setAqi] = useState(null);
+  const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -32,18 +14,22 @@ export const useWeather = () => {
     setLoading(true);
     setError(null);
     try {
-      let data;
+      let weatherData;
       if (city) {
-        data = await weatherService.fetchByCity(city, unit);
-        const { coord } = data;
-        const fc = await weatherService.fetchForecast(coord.lat, coord.lon, unit);
-        setForecast(groupForecast(fc.list));
+        weatherData = await weatherService.fetchByCity(city, unit);
       } else if (lat && lon) {
-        data = await weatherService.fetchByCoords(lat, lon, unit);
-        const fc = await weatherService.fetchForecast(lat, lon, unit);
-        setForecast(groupForecast(fc.list));
+        weatherData = await weatherService.fetchByCoords(lat, lon, unit);
       }
-      setCurrent(data);
+      
+      if (weatherData) {
+        const { lat: cLat, lon: cLon } = weatherData.coord;
+        const aqiData = await weatherService.fetchAirQuality(cLat, cLon);
+        const forecastData = await weatherService.fetchForecast(cLat, cLon, unit);
+        
+        setAqi(aqiData.list[0].main.aqi);
+        setForecast(forecastData.list);
+        setCurrent(weatherData);
+      }
     } catch (err) {
       let msg = err.message || 'Unknown error';
       if (!navigator.onLine) {
@@ -57,7 +43,7 @@ export const useWeather = () => {
       }
       setError(msg);
       setCurrent(null);
-      setForecast([]);
+      setAqi(null);
     } finally {
       setLoading(false);
     }
@@ -66,19 +52,11 @@ export const useWeather = () => {
   const convertUnits = (toUnit) => {
     if (!current) return;
     // lazy load convert utilities
-    import('../utils/convert').then(({ convertWeatherData, cToF, fToC }) => {
+    import('../utils/convert').then(({ convertWeatherData }) => {
       const convertedCurrent = convertWeatherData(current, toUnit);
       setCurrent(convertedCurrent);
-      // convert forecast temps arrays
-      const convFc = forecast.map((day) => {
-        const convertedTemps = day.temps.map((t) =>
-          toUnit === 'metric' ? fToC(t) : cToF(t)
-        );
-        return { ...day, temps: convertedTemps };
-      });
-      setForecast(convFc);
     });
   };
 
-  return { current, forecast, loading, error, fetchWeather, convertUnits };
+  return { current, aqi, forecast, loading, error, fetchWeather, convertUnits };
 };

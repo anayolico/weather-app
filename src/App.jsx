@@ -1,190 +1,153 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ThemeProvider } from './context/ThemeContext.jsx';
 import { useWeather } from './hooks/useWeather';
 import { debounce } from './utils/debounce';
-import SearchBar from './components/SearchBar';
-import WeatherCard from './components/WeatherCard';
+import Navbar from './components/Navbar';
+import HeroWeatherCard from './components/HeroWeatherCard';
+import AirQualityCard from './components/AirQualityCard';
+import RadarCard from './components/RadarCard';
+import VisibilityCard from './components/VisibilityCard';
+import PrecipitationCard from './components/PrecipitationCard';
 import ForecastCard from './components/ForecastCard';
-import ThemeToggle from './components/ThemeToggle';
-import UnitToggle from './components/UnitToggle';
-import BackgroundWrapper from './components/BackgroundWrapper';
-import Loading from './components/Loading';
 import Error from './components/Error';
 import Splash from './components/Splash';
+import { HeroSkeleton, CardSkeleton } from './components/Skeletons';
+import Toast from './components/Toast';
 import "./index.css";
+import "./App.css";
 
 function App() {
-  const { current, forecast, loading, error, fetchWeather, convertUnits } = useWeather();
-  const [unit, setUnit] = useState(() => {
-    return localStorage.getItem('unit') || 'metric';
-  });
-
-  // splash screen visibility
+  const { current, aqi, forecast, loading, error, fetchWeather } = useWeather();
+  const [unit, setUnit] = useState(() => localStorage.getItem('unit') || 'metric');
   const [showSplash, setShowSplash] = useState(true);
-  // track if user has denied geolocation permission so we can prompt search
   const [permissionDenied, setPermissionDenied] = useState(false);
-  // remember that we've already tried requesting coords (so we don't repeat)
-  const [locationRequested, setLocationRequested] = useState(false);
+
+  const [isLocating, setIsLocating] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = useCallback((message, type = 'info') => {
+    setToast({ message, type });
+  }, []);
 
   const handleSearch = useCallback(
     debounce((q) => {
-      if (q) {
-        setPermissionDenied(false);
-        fetchWeather({ city: q, unit });
-      }
+      if (q) fetchWeather({ city: q, unit });
     }, 500),
     [unit, fetchWeather]
   );
 
-  // helper to request geolocation; exported as callback so it can be used both
-  // after splash automatically and by a manual button if needed.
   const tryCoords = useCallback(() => {
-    if (!navigator.geolocation) return;
-    setLocationRequested(true);
+    if (!navigator.geolocation) {
+      showToast("Geolocation is not supported by your browser", "error");
+      return;
+    }
+    
+    setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPermissionDenied(false);
+        setIsLocating(false);
         fetchWeather({ lat: pos.coords.latitude, lon: pos.coords.longitude, unit });
       },
       (err) => {
+        setIsLocating(false);
         if (err.code === 1) {
           setPermissionDenied(true);
-        }
-      }
-    );
-  }, [fetchWeather, unit]);
-
-  const handleUnitToggle = (newUnit) => {
-    setUnit(newUnit);
-    localStorage.setItem('unit', newUnit);
-    // convert existing data instead of re-fetching
-    if (current) {
-      convertUnits(newUnit);
-    }
-  };
-
-  // request location once the splash has disappeared
-  useEffect(() => {
-    if (showSplash || locationRequested) return; // wait until splash is done and only once
-
-    tryCoords();
-
-    // watch for permission changes so we can re-try when granted later
-    if (navigator.permissions && navigator.permissions.query) {
-      navigator.permissions.query({ name: 'geolocation' }).then((perm) => {
-        perm.onchange = () => {
-          if (perm.state === 'granted') {
-            setPermissionDenied(false);
-            tryCoords();
+          // Only show error toast if we don't have weather data yet
+          if (!current) {
+            showToast("Location access denied. Please enable it in browser settings.", "error");
           }
-        };
-      });
-    }
-  }, [showSplash, tryCoords, locationRequested]);
-
-  let weatherType = current?.weather?.[0]?.main.toLowerCase() || 'clear';
-  const iconCode = current?.weather?.[0]?.icon || '';
-  if (iconCode.endsWith('n')) {
-    weatherType = 'night';
-  }
+        } else {
+          // If we already have data, don't annoy the user with a retry error
+          if (!current) {
+            showToast("Unable to retrieve location. Try searching for a city.", "info");
+          }
+        }
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+  }, [fetchWeather, unit, showToast]);
 
   useEffect(() => {
-    const descriptionTag = document.querySelector('meta[name="description"]');
-    if (current?.name) {
-      document.title = `${current.name} weather - Weather Forecast`;
-      if (descriptionTag) {
-        descriptionTag.setAttribute(
-          'content',
-          `Current weather in ${current.name}: ${current.weather[0].description}`
-        );
-      }
-    } else {
-      document.title = 'Weather Forecast';
-      if (descriptionTag) {
-        descriptionTag.setAttribute(
-          'content',
-          'Advanced Weather Forecast Progressive Web App built with React and Vite'
-        );
-      }
+    if (!showSplash) {
+      tryCoords();
+      // Initial helpful toast only if no data after a delay
+      const timer = setTimeout(() => {
+        // We check current via a fresh check inside the timeout
+      }, 2000);
+      return () => clearTimeout(timer);
     }
-  }, [current]);
+  }, [showSplash, tryCoords]); // Removed current and showToast from dependencies
+
+  // Re-fetch weather when unit changes
+  useEffect(() => {
+    if (current?.name) {
+      fetchWeather({ city: current.name, unit });
+    }
+  }, [unit, fetchWeather]);
 
   return (
-    <ThemeProvider>
-      <BackgroundWrapper weatherType={weatherType}>
-          {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
-        <div className={`app-container${!showSplash ? ' visible' : ''}`}>
-          {/* main content only shown when splash gone */}
-          {!showSplash && (
-            <>
-              <header className="top-bar">
-                <div className="search-wrap">
-                  <SearchBar
-                    onSearch={handleSearch}
-                    onSubmit={(q) => {
-                      if (q && q.trim()) {
-                        fetchWeather({ city: q, unit });
-                      } else {
-                        // empty search should show a gentle error rather than fallback
-                        setPermissionDenied(false); // clear any previous prompt
-                        fetchWeather({ city: ' ' , unit }); // will trigger "City not found"
-                      }
-                    }}
-                  />
-                </div>
-                <div className="controls">
-                  <UnitToggle unit={unit} onToggle={handleUnitToggle} />
-                  <ThemeToggle />
-                </div>
-              </header>
+    <div className="app-shell">
+      {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
 
-              {loading && <Loading />}
-              {error && (
-                <Error
-                  message={
-                    error === 'City not found'
-                      ? 'City not found. Please try again.'
-                      : error
-                  }
-                />
-              )}
+      {!showSplash && (
+        <>
+          <Navbar
+            onSearch={handleSearch}
+            onSubmit={(q) => fetchWeather({ city: q, unit })}
+          />
 
-              {/* initial instruction before we get any weather or denial */}
-              {!loading && !error && !current && !permissionDenied && (
-                <div className="location-message">
-                  <p>Please allow location access when prompted to load your local weather.</p>
-                  <button className="loc-action" onClick={tryCoords}>Enable location</button>
+          <main className="main-content">
+            {loading ? (
+              <div className="dashboard-grid">
+                <div className="hero-section"><HeroSkeleton /></div>
+                <div className="grid-middle">
+                  <CardSkeleton /><CardSkeleton /><CardSkeleton /><CardSkeleton />
                 </div>
-              )}
-
-              {/* if user denied location, show small prompt */}
-              {permissionDenied && !current && !error && (
-                <div className="location-message">
-                  <p>Location access was denied. Please search for a city manually.</p>
-                  <button className="loc-action" onClick={() => {
-                    setPermissionDenied(false);
-                    tryCoords();
-                  }}>
-                    Try again
-                  </button>
+                <div className="grid-bottom">
+                  <CardSkeleton />
                 </div>
-              )}
-
-              {current && !loading && !error && (
-                <>
-                  <WeatherCard data={current} unit={unit} />
-                  <div className="forecast-list">
-                    {forecast.map((day) => (
-                      <ForecastCard key={day.date} day={day} unit={unit} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
+              </div>
+            ) : error ? (
+              <Error message={error} />
+            ) : !current ? (
+              <div className="location-prompt">
+                <p>Allow location access or search for a city to see weather data.</p>
+                <button 
+                  className={`loc-btn${isLocating ? ' loading' : ''}`} 
+                  onClick={tryCoords}
+                  disabled={isLocating}
+                >
+                  {isLocating ? 'Detecting Location...' : 'Enable location'}
+                </button>
+              </div>
+            ) : (
+              <div className="dashboard-grid">
+                <div className="hero-section">
+                  <HeroWeatherCard data={current} unit={unit} />
+                </div>
+                <div className="grid-middle">
+                  <AirQualityCard aqi={aqi} />
+                  <RadarCard lat={current.coord.lat} lon={current.coord.lon} city={current.name} />
+                  <VisibilityCard visibility={current.visibility ? (current.visibility / 1000) : 10} />
+                  <ForecastCard data={forecast} />
+                </div>
+                <div className="grid-bottom">
+                  <PrecipitationCard data={forecast} />
+                </div>
+              </div>
+            )}
+          </main>
+          
+          {toast && (
+            <Toast 
+              message={toast.message} 
+              type={toast.type} 
+              onClose={() => setToast(null)} 
+            />
           )}
-        </div>
-      </BackgroundWrapper>
-    </ThemeProvider>
+        </>
+      )}
+    </div>
   );
 }
 

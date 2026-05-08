@@ -29,6 +29,13 @@ const fetchByCity = async (city, unit = 'metric') => {
   return parseJsonResponse(resp);
 };
 
+const fetchAirQuality = async (lat, lon) => {
+  const url = `${BASE_URL}/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('Failed to fetch air quality');
+  return parseJsonResponse(resp);
+};
+
 const fetchForecast = async (lat, lon, unit = 'metric') => {
   const url = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${unit}&appid=${API_KEY}`;
   const resp = await fetch(url);
@@ -39,5 +46,6 @@ const fetchForecast = async (lat, lon, unit = 'metric') => {
 export default {
   fetchByCoords,
   fetchByCity,
+  fetchAirQuality,
   fetchForecast,
 };
