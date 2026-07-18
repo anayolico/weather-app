@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useWeather } from './hooks/useWeather';
 import { debounce } from './utils/debounce';
 import Navbar from './components/Navbar';
@@ -12,6 +12,7 @@ import Error from './components/Error';
 import Splash from './components/Splash';
 import { HeroSkeleton, CardSkeleton } from './components/Skeletons';
 import Toast from './components/Toast';
+import SEO from './components/SEO';
 import "./index.css";
 import "./App.css";
 
@@ -23,6 +24,11 @@ function App() {
 
   const [isLocating, setIsLocating] = useState(false);
   const [toast, setToast] = useState(null);
+
+  const currentRef = useRef(current);
+  useEffect(() => {
+    currentRef.current = current;
+  }, [current]);
 
   const showToast = useCallback((message, type = 'info') => {
     setToast({ message, type });
@@ -42,29 +48,42 @@ function App() {
     }
     
     setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setPermissionDenied(false);
-        setIsLocating(false);
-        fetchWeather({ lat: pos.coords.latitude, lon: pos.coords.longitude, unit });
-      },
-      (err) => {
-        setIsLocating(false);
-        if (err.code === 1) {
-          setPermissionDenied(true);
-          // Only show error toast if we don't have weather data yet
-          if (!current) {
-            showToast("Location access denied. Please enable it in browser settings.", "error");
+
+    const optionsHigh = { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 };
+    const optionsLow = { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 };
+
+    const getPosition = (options, isFallback = false) => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setPermissionDenied(false);
+          setIsLocating(false);
+          fetchWeather({ lat: pos.coords.latitude, lon: pos.coords.longitude, unit });
+        },
+        (err) => {
+          if (!isFallback && err.code !== 1) {
+            // If high accuracy timed out/failed, retry with low accuracy
+            getPosition(optionsLow, true);
+          } else {
+            setIsLocating(false);
+            if (err.code === 1) {
+              setPermissionDenied(true);
+              // Only show error toast if we don't have weather data yet
+              if (!currentRef.current) {
+                showToast("Location access denied. Please enable it in browser settings.", "error");
+              }
+            } else {
+              // If we already have data, don't annoy the user with a retry error
+              if (!currentRef.current) {
+                showToast("Unable to retrieve location. Try searching for a city.", "info");
+              }
+            }
           }
-        } else {
-          // If we already have data, don't annoy the user with a retry error
-          if (!current) {
-            showToast("Unable to retrieve location. Try searching for a city.", "info");
-          }
-        }
-      },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-    );
+        },
+        options
+      );
+    };
+
+    getPosition(optionsHigh, false);
   }, [fetchWeather, unit, showToast]);
 
   useEffect(() => {
@@ -87,6 +106,24 @@ function App() {
 
   return (
     <div className="app-shell">
+      <SEO 
+        title={
+          current 
+            ? `Weather in ${current.name}, ${current.sys?.country} - ${Math.round(current.main?.temp)}°C | WeatherSky` 
+            : "WeatherSky | Real-Time Weather Forecasts & Air Quality"
+        }
+        description={
+          current 
+            ? `Current weather in ${current.name}, ${current.sys?.country}: ${current.weather[0]?.description}. Temp: ${Math.round(current.main?.temp)}°C. Wind: ${current.wind?.speed} m/s, Humidity: ${current.main?.humidity}%.`
+            : "Get real-time weather updates, dynamic forecasts, visibility details, and air quality indexes for any city worldwide with WeatherSky."
+        }
+        keywords={
+          current 
+            ? `${current.name} weather, ${current.name} live weather, ${current.name} forecast, WeatherSky, weather`
+            : "weather app, live weather, dynamic forecasts, air quality index, local weather, WeatherSky"
+        }
+        cityData={current}
+      />
       {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
 
       {!showSplash && (
@@ -137,6 +174,18 @@ function App() {
               </div>
             )}
           </main>
+
+          <footer className="app-footer">
+            <a 
+              href="https://anayolico.name.ng/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="app-footer-link"
+              title="Caleb Anayolico's Web & Mobile Developer Portfolio"
+            >
+              Built by Caleb Anayolico 👨‍💻
+            </a>
+          </footer>
           
           {toast && (
             <Toast 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import logo from '../assets/weathersky_logo.png';
 import './Navbar.css';
 
 const Navbar = ({ onSearch, onSubmit }) => {
@@ -27,8 +28,7 @@ const Navbar = ({ onSearch, onSubmit }) => {
     <nav className="navbar" role="navigation" aria-label="Main navigation">
       <div className="navbar-left">
         <div className="nav-brand">
-          <span className="brand-icon">☁</span>
-          <span className="brand-name">WeatherSky</span>
+          <img src={logo} alt="WeatherSky Logo" className="brand-logo" />
         </div>
       </div>
 

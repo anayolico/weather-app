@@ -40,6 +40,12 @@
   letter-spacing: -0.01em;
 }
 
+.brand-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
 /* Center: nav tabs */
 .nav-tabs {
   display: flex;
