@@ -13,6 +13,7 @@ import Splash from './components/Splash';
 import { HeroSkeleton, CardSkeleton } from './components/Skeletons';
 import Toast from './components/Toast';
 import SEO from './components/SEO';
+import PortfolioToast from './components/PortfolioToast';
 import "./index.css";
 import "./App.css";
 
@@ -194,6 +195,8 @@ function App() {
               onClose={() => setToast(null)} 
             />
           )}
+
+          <PortfolioToast />
         </>
       )}
     </div>
