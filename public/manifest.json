@@ -1,20 +1,26 @@
 {
-  "short_name": "WeatherPWA",
-  "name": "Weather Forecast PWA",
+  "short_name": "WeatherSky",
+  "name": "WeatherSky - Real-Time Weather Forecasts",
+  "description": "Real-time city forecasts, air quality, visibility, precipitation, and local weather conditions by Caleb Anayolico.",
   "icons": [
     {
-      "src": "pwa-icon-192.png",
+      "src": "/weathersky-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "pwa-icon-512.png",
+      "src": "/weathersky-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#12122c",
-  "background_color": "#f6d365"
+  "background_color": "#12122c",
+  "categories": ["weather", "utilities", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
 }

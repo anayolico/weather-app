@@ -115,13 +115,13 @@ function App() {
         }
         description={
           current 
-            ? `Current weather in ${current.name}, ${current.sys?.country}: ${current.weather[0]?.description}. Temp: ${Math.round(current.main?.temp)}°C. Wind: ${current.wind?.speed} m/s, Humidity: ${current.main?.humidity}%.`
-            : "Get real-time weather updates, dynamic forecasts, visibility details, and air quality indexes for any city worldwide with WeatherSky."
+            ? `Current weather in ${current.name}, ${current.sys?.country}: ${current.weather[0]?.description}. Temperature: ${Math.round(current.main?.temp)}°C. Wind: ${current.wind?.speed} m/s, humidity: ${current.main?.humidity}%. WeatherSky is a portfolio app by Caleb Anayolico.`
+            : "WeatherSky is a portfolio weather app by Caleb Anayolico for real-time city forecasts, air quality, visibility, precipitation, and local weather conditions worldwide."
         }
         keywords={
           current 
-            ? `${current.name} weather, ${current.name} live weather, ${current.name} forecast, WeatherSky, weather`
-            : "weather app, live weather, dynamic forecasts, air quality index, local weather, WeatherSky"
+            ? `${current.name} weather, ${current.name} live weather, ${current.name} forecast, WeatherSky, Caleb Anayolico, Anayolico weather app`
+            : "WeatherSky, WeatherSky app, Caleb Anayolico weather app, Anayolico portfolio weather app, live weather, dynamic forecasts, air quality index, local weather"
         }
         cityData={current}
       />
